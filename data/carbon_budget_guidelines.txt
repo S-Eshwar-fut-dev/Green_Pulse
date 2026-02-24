@@ -1,0 +1,60 @@
+CARBON BUDGETING GUIDELINES FOR ROAD FREIGHT LOGISTICS — INDIA
+Prepared for GreenPulse Fleet Operators | Version 2.1 | 2025
+
+SECTION 1: WHAT IS A CARBON BUDGET?
+A carbon budget is the maximum permissible quantity of CO₂ (or CO₂-equivalent) that a
+logistics operation may emit over a defined period while remaining on track for a stated
+climate target. For India's logistics sector, carbon budgets are defined at three levels:
+  (a) National level: India's cumulative carbon budget consistent with 1.5°C warming is
+      approximately 50 billion tonnes CO₂e from 2020 onwards (IPCC AR6 WG3, Chapter 3).
+  (b) Sectoral level: The transport sector's share is 12–15% of India's total budget,
+      equivalent to 6–7.5 billion tonnes CO₂e over the 2020–2050 period.
+  (c) Operational level (fleet): Defined per route–day, used to set daily alert thresholds.
+
+SECTION 2: OPERATIONAL CARBON BUDGET — METHODOLOGY
+GreenPulse adopts the per-route-day carbon budget framework:
+
+  Budget (kg CO₂/route/day) = Baseline_CO₂ × (1 - Reduction_Target)
+
+Where Baseline_CO₂ are historical averages (diesel, laden, full-route):
+  delhi_mumbai      : 850 kg CO₂/trip (average 4 trucks/day = 3,400 kg/day fleet baseline)
+  chennai_bangalore : 210 kg CO₂/trip (average 3 trucks/day = 630 kg/day fleet baseline)
+  kolkata_patna     : 190 kg CO₂/trip (average 3 trucks/day = 570 kg/day fleet baseline)
+
+NLP 2022 Reduction Target for 2027: 20% vs 2022 baseline.
+  delhi_mumbai daily budget (2027 target): 2,720 kg CO₂/day
+  chennai_bangalore daily budget: 504 kg CO₂/day
+  kolkata_patna daily budget: 456 kg CO₂/day
+
+SECTION 3: ALERT THRESHOLDS (GREENPULSE OPERATIONAL)
+  GREEN  (NORMAL)  : Route CO₂ within 0–90% of daily budget.
+  YELLOW (WARNING) : Route CO₂ at 90–100% of daily budget. Dispatch review recommended.
+  RED    (ALERT)   : Route CO₂ exceeds daily budget. Escalate to fleet manager immediately.
+  
+Per-vehicle 5-minute anomaly threshold (HIGH_EMISSION_ALERT):
+  Fires when vehicle's 5-min CO₂ > 2× 30-min rolling average for that vehicle.
+  Typical trigger: injector fault, extreme idle, heavy grade, or route deviation.
+
+SECTION 4: CARBON CREDIT ELIGIBILITY
+Under the proposed Indian Carbon Market (ICM) framework (MoEFCC, 2024):
+  - Fleet operators who reduce verified CO₂ below their registered baseline earn carbon
+    credits at a current indicative price of ₹430–680 per tonne CO₂ (BEE-ICM Registry).
+  - Eligible verification methodology: VERRA VM0036 or equivalent MRV protocol.
+  - Monitoring interval: Monthly, with quarterly third-party verification.
+  - GreenPulse's real-time CO₂ logging creates an auditable, timestamped MRV data trail
+    that can be submitted directly to BEE's ICM registry — a significant competitive advantage.
+
+SECTION 5: FUEL EFFICIENCY AND CO₂ LINKAGE
+Fuel efficiency (km/L) and CO₂ emissions are inversely proportional:
+  CO₂ per km = Diesel Factor (2.68 kg/L) ÷ Fuel Efficiency (km/L)
+  At 4.0 km/L : 0.67 kg CO₂/km
+  At 3.0 km/L : 0.89 kg CO₂/km (typical laden HCV on NH48)
+  At 2.5 km/L : 1.07 kg CO₂/km (overload or steep gradient)
+Improving average fleet efficiency from 3.0 to 3.5 km/L reduces per-km CO₂ by 14.3%.
+
+SECTION 6: RECOMMENDED ACTIONS WHEN BUDGET EXCEEDED
+1. Immediate: Dispatch supervisor contacts driver for speed reduction (target 60–70 kmph:
+   optimal fuel efficiency band for HCVs per MoRTH study, 2022).
+2. Short-term: Identify and fix top fuel-wasting fault (see maintenance logs).
+3. Medium-term: Route reassignment — use DFC rail for Delhi–Mumbai legs > 200 km.
+4. Long-term: Replace highest-emitting diesel trucks with CNG or BEV per FAME II subsidy.
