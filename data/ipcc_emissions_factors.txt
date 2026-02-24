@@ -1,0 +1,64 @@
+IPCC GREENHOUSE GAS EMISSION FACTORS — TRANSPORT FUELS (AR6, 2021)
+Compiled for GreenPulse Compliance Reference
+
+SOURCE: IPCC Sixth Assessment Report (AR6), Working Group III, Chapter 10: Transport.
+Cross-reference: DEFRA/BEIS 2023 Conversion Factors; MoEFCC India 2022 GHG Inventory.
+
+DIESEL (HIGH SPEED DIESEL — HSD)
+Emission Factor: 2.68 kg CO₂ per litre of diesel consumed (tank-to-wheel, combustion only).
+Full life-cycle (well-to-wheel): 3.17 kg CO₂e per litre (includes extraction and refining).
+India Standard: Bureau of Indian Standards IS 1460:2017 (BS VI HSD); sulphur < 10 ppm.
+Density: ~0.835 kg/L at 15°C.
+Energy content: ~35.8 MJ/litre.
+Methane slip: Negligible for compression-ignition engines (< 0.01% of CO₂ equiv.).
+Note: GreenPulse uses 2.68 kg/L (combustion, tank-to-wheel) per NLP 2022 and
+India GHG Programme guidelines. This is the standard adopted by BEE for PAT scheme reporting.
+
+CNG (COMPRESSED NATURAL GAS)
+Emission Factor: 2.04 kg CO₂ per cubic metre (m³) of CNG consumed.
+Full life-cycle: 2.55 kg CO₂e per m³.
+CNG trucks typical efficiency: 3.5 km/m³ (laden, highway).
+India context: ~450,000 CNG trucks operational as of 2024 (MoRTH data),
+primarily in NCR, Mumbai, Pune, Ahmedabad under NGT mandates.
+CO₂ reduction vs diesel: CNG emits ~25% less CO₂ per kilometre on equivalent trips.
+Note: CNG produces ~10-15% lower particulate matter but similar NOx as diesel.
+
+ELECTRIC TRUCKS (Battery Electric Vehicles — BEV)
+Direct tailpipe CO₂: 0 kg CO₂ per km (zero-emission vehicle).
+Indirect (grid-based): 0.82 kg CO₂ per kWh consumed (India average grid emission factor, CEA 2023).
+Typical BEV truck consumption: 1.8–2.2 kWh/km (40-tonne GVW laden).
+Effective indirect CO₂: ~1.58 kg CO₂ per km (vs ~0.94 kg/km for BS-VI diesel on same route).
+Grid decarbonisation trajectory: India's emission factor is projected at 0.55 kg CO₂/kWh by 2030
+as renewables reach 500 GW (as per NDC targets), making BEV trucks significantly cleaner.
+FAME II incentive: ₹50 lakh subsidy per electric truck (>12 tonne GVW) under FAME II Phase 3 (2024).
+
+HYDROGEN FUEL CELL (FCEV) — EMERGING
+Emission Factor (green hydrogen): 0.0 kg CO₂ per km direct.
+Grey hydrogen: 9.3 kg CO₂ per kg H₂ produced (SMR process).
+India context: Pilot deployments by HPCL and IOCL (2023–24); commercial scale expected 2027+.
+
+PETROL / GASOLINE (Light Commercial Vehicles)
+Emission Factor: 2.31 kg CO₂ per litre.
+Life-cycle: 2.78 kg CO₂e per litre.
+
+COMPARISON TABLE — HEAVY FREIGHT, PER 100 KM (LADEN)
+Fuel Type       | Consumption    | CO₂ (kg/100km) | Life-cycle CO₂e
+----------------|----------------|-----------------|----------------
+Diesel (BS VI)  | 26 L/100km     | 69.7            | 82.4
+CNG             | 22 m³/100km    | 44.9            | 56.1
+BEV (2024 grid) | 180 kWh/100km  | 147.6 indirect  | 147.6
+BEV (2030 grid) | 180 kWh/100km  | 99.0 indirect   | 99.0
+FCEV (green H₂) | 8 kg H₂/100km  | 0.0             | ~2.4
+
+GHG CHARACTERISATION
+CO₂ (carbon dioxide): Primary fossil-fuel combustion product. GWP100 = 1.
+CH₄ (methane): Minor slip from CNG engines. GWP100 = 27.9 (AR6).
+N₂O (nitrous oxide): From diesel combustion. GWP100 = 273. Factor: 0.006 g/km typical HCV.
+
+Note: GreenPulse reports CO₂ only (not CO₂e) for operational simplicity.
+For full CO₂e, multiply CH₄ contribution × 27.9 and add to CO₂ total.
+
+REGULATORY THRESHOLDS (INDIA)
+BEE PAT Scheme Threshold: 2,000 TOE/year triggers mandatory energy audit.
+1 tonne diesel ≈ 1.013 TOE. Fleet burning >1,975 tonnes diesel/year falls under PAT.
+Carbon Credit price (India Carbon Market, 2024): ₹430–680 per tonne CO₂ equivalent.
