@@ -1,0 +1,53 @@
+INDIA NATIONAL LOGISTICS POLICY 2022 — SUMMARY FOR CARBON COMPLIANCE
+
+Released: September 17, 2022 | Ministry of Commerce and Industry, Government of India
+
+OVERVIEW
+The National Logistics Policy (NLP) 2022 is India's first integrated logistics policy framework
+designed to reduce the logistics cost from the current 13–14% of GDP to single digits (below 8%)
+by 2030 and position India among the top-25 countries in the Logistics Performance Index (LPI).
+India currently ranks 44th on the Logistics Performance Index (World Bank, 2023).
+
+KEY TARGETS AND TIMELINES
+- Logistics cost reduction: From ~14% of GDP to under 8% by 2030.
+- Carbon emission reduction: Logistics sector must align with India's Nationally Determined
+  Contributions (NDC) — a 45% reduction in emissions intensity of GDP by 2030 vs. 2005 baseline.
+- EV fleet mandate: By 2030, at least 30% of last-mile delivery vehicles must be electric
+  (FAME II scheme extension under MoHI&PE guidelines).
+- Modal shift target: Increase rail freight share from current 27% to 45% by 2030 to reduce
+  road transport emissions (road carries 60% of freight by value but emits 88% of transport CO₂).
+- Dedicated Freight Corridors (DFCs): Eastern and Western DFCs now fully operational.
+  Expected to shift 350 million tonnes of cargo off roads annually, reducing road CO₂ by
+  an estimated 457 million kg/year.
+
+PM-GATSISHAKTI NATIONAL MASTERPLAN
+The NLP is implemented through PM-GatiShakti, a digital infrastructure platform integrating
+16 Ministries. It provides real-time visibility into 1,600+ infrastructure projects and enables
+multimodal freight route optimization. GreenPulse aligns directly with PM-GatiShakti by providing
+the real-time carbon intelligence layer that GatiShakti currently lacks.
+
+CARBON BUDGET FRAMEWORK FOR ROAD LOGISTICS
+The NLP implicitly sets the following operational CO₂ benchmarks for heavy freight (MoRTH):
+- Delhi–Mumbai corridor: Baseline at 850 kg CO₂/trip per 40-tonne truck (diesel, laden).
+  Target: 680 kg CO₂/trip by 2027 (20% reduction via route optimization and load efficiency).
+- Chennai–Bangalore corridor: Baseline at 210 kg CO₂/trip. Target: 168 kg CO₂/trip.
+- Kolkata–Patna corridor: Baseline at 190 kg CO₂/trip. Target: 152 kg CO₂/trip.
+
+COMPLIANCE PENALTIES
+The Bureau of Energy Efficiency (BEE) under the Perform, Achieve and Trade (PAT) scheme
+covers logistics entities with energy consumption above 2,000 TOE (tonnes of oil equivalent)
+per year. Non-compliance with PAT cycle targets attracts penalties of ₹10,000 per day.
+Under draft rules for Transport Sector Energy Conservation (2024), fleet operators with >100
+vehicles are required to maintain a Carbon Intensity Register and submit quarterly CO₂ reports.
+
+FUEL EFFICIENCY NORMS (AIS:147 BS VI)
+All new heavy commercial vehicles from April 2023 must comply with fuel consumption norms:
+- 16-tonne GVW: Max 25.3 L/100 km laden.
+- 40-tonne GVW: Max 35.4 L/100 km laden.
+Non-compliant vehicles face type approval rejection and cannot be registered.
+
+RELEVANCE TO GREENPULSE
+GreenPulse directly operationalises NLP 2022 targets by computing real-time CO₂ per corridor,
+alerting when a vehicle exceeds the per-trip budget, and projecting annualised savings to
+demonstrate NLP compliance trajectory. The dashboard's CO₂ Saved counter reflects progress
+toward the 20% route-level reduction targets embedded in the NLP.
