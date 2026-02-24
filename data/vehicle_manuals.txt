@@ -1,0 +1,81 @@
+VEHICLE TECHNICAL MANUALS — SUMMARY REFERENCE
+GreenPulse Fleet Trucks | 3 Model Types in Operation
+
+═══════════════════════════════════════
+MODEL 1: TATA LPT 2518 (Diesel, BS VI)
+═══════════════════════════════════════
+GVW (Gross Vehicle Weight): 25,000 kg (25 tonnes)
+Engine: Tata 6-cylinder turbocharged diesel, 5,883 cc
+Power: 180 HP @ 2,200 RPM | Torque: 650 Nm @ 1,400 RPM
+Fuel Tank Capacity: 300 litres (dual tank, 150L each)
+Transmission: 9-speed synchromesh manual (ZF technology)
+Rated Fuel Efficiency (Unladen, Highway): 7.5–8.2 km/L
+Rated Fuel Efficiency (Laden 25T, Highway NH48): 3.8–4.3 km/L
+Rated Fuel Efficiency (Laden, Urban/hilly): 2.6–3.0 km/L
+CO₂ at rated highway efficiency (laden): 0.62–0.70 kg/km
+CO₂ at urban efficiency (laden): 0.89–1.03 kg/km
+Emission Standard: BS VI (OBD-II + DPF + SCR + EGR)
+Service Interval: Every 40,000 km or 6 months (whichever first)
+AdBlue Consumption: ~4% of diesel consumption
+Operation Routes: Delhi–Mumbai (primary), Kolkata–Patna
+Fleet vehicles of this model: TRK-DL-001, TRK-DL-002, TRK-KL-001, TRK-KL-002
+
+FAULT INDICATORS AFFECTING FUEL:
+- Air Filter Indicator Red: Replace filter; +15–20% fuel penalty if ignored > 5,000 km
+- DPF Regeneration Required: Forced regen within 50 km; avoid switch-off during regen
+- SCR Fault (AdBlue): Engine derate to 60% power; fuel efficiency drops 20–25%
+
+═══════════════════════════════════════
+MODEL 2: ASHOK LEYLAND AVTR 4220 (Diesel, BS VI)
+═══════════════════════════════════════
+GVW: 42,000 kg (42 tonnes — multi-axle)
+Engine: H-Series 7.2L I6 turbocharged diesel
+Power: 280 HP @ 1,800 RPM | Torque: 1,100 Nm @ 1,200–1,400 RPM
+Fuel Tank Capacity: 400 litres (dual 200L tank)
+Transmission: iEGS 16-speed automated manual (Allison option)
+Rated Fuel Efficiency (Unladen): 5.8–6.5 km/L
+Rated Fuel Efficiency (Laden 40T, NH48): 3.2–3.8 km/L
+Rated Fuel Efficiency (Laden, Ghats/hilly): 2.0–2.6 km/L
+CO₂ at rated highway efficiency (laden): 0.71–0.84 kg/km
+CO₂ on Ghats (hilly, laden): 1.03–1.34 kg/km
+Emission Standard: BS VI (DPF + SCR + CEGR, OBD-II Stage 2)
+Service Interval: Every 50,000 km or 6 months
+AdBlue Consumption: ~3.5% of diesel
+iEGS (Intelligent Exhaust Gas System): Auto-adjusts fuelling for hill and load conditions.
+Operation Routes: Delhi–Mumbai (heavy freight), Chennai–Bangalore
+Fleet vehicles: TRK-DL-003, TRK-DL-004, TRK-CH-001, TRK-CH-002
+
+FAULT INDICATORS AFFECTING FUEL:
+- EGR Fault (P0401–P0404): EGR stuck open causes rich mixture; +15–20% fuel burn
+- Gearbox oil temperature warning: Reduce speed; gearbox drag adds +5–8% fuel
+- Tyre pressure warning: Each 10 PSI under recommended = +2.5% fuel consumption
+
+═══════════════════════════════════════
+MODEL 3: BHARATBENZ 2523 R (Diesel, BS VI)
+═══════════════════════════════════════
+GVW: 25,000 kg (25 tonnes)
+Engine: Mercedes-Benz OM906hLA, 6.4L I6 diesel
+Power: 230 HP @ 2,200 RPM | Torque: 900 Nm @ 1,300 RPM
+Fuel Tank Capacity: 250 litres
+Transmission: 8-speed AMT (Automated Manual, Mercedes PowerShift)
+Rated Fuel Efficiency (Unladen): 8.5–9.2 km/L
+Rated Fuel Efficiency (Laden 22T, Highway): 4.5–5.0 km/L
+CO₂ at rated highway efficiency (laden): 0.54–0.60 kg/km
+Emission Standard: BS VI (SCR + DPF + EGR, Euro VI base calibration)
+Service Interval: Every 60,000 km (extended service TBP technology)
+FOTA (Firmware Over The Air): Remote ECU updates for fuel map optimisation.
+Operation Routes: Chennai–Bangalore (premium parcels), Kolkata–Patna
+Fleet vehicles: TRK-CH-003, TRK-KL-003
+
+FAULT INDICATORS AFFECTING FUEL:
+- AMT actuator fault: Manual override required; driver efficiency drops 8–12%
+- Intake manifold sensor (P0105): Incorrect fuelling; +7–10% fuel burn
+- Exhaust back pressure high: DPF ash load critical; forced workshop regen required
+
+FLEET EFFICIENCY RANKING (ascending CO₂ per km, unladen highway)
+1. BharatBenz 2523 R    — 0.29 kg CO₂/km unladen
+2. Tata LPT 2518        — 0.33 kg CO₂/km unladen
+3. Ashok Leyland AVTR   — 0.41 kg CO₂/km unladen
+
+Note: Laden efficiency varies significantly by load factor and terrain.
+GreenPulse uses per-event fuel telemetry (not rated specs) for live CO₂ computation.
