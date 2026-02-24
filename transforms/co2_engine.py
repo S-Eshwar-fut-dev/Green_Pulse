@@ -101,14 +101,29 @@ def build_sliding_windows(co2_table: pw.Table) -> pw.Table:
 
 
 def build_live_metrics(co2_table: pw.Table) -> pw.Table:
-    """Per-event live metrics table with CO₂, status, and baseline savings."""
+    """Per-event live metrics table with CO2, status, and baseline savings."""
 
     @pw.udf
-    def co2_saved(route_id: str, co2_kg: float) -> float:
-        baseline = ROUTE_BASELINES.get(route_id, 500.0)
-        return round(baseline - co2_kg, 4)
+    def co2_rate_saved(route_id: str, co2_kg: float, speed_kmph: float) -> float:
+        """CO2 saved vs expected rate for this distance segment.
+        Expected = baseline_rate x distance_covered.
+        Actual = co2_kg. Saved = Expected - Actual.
+        """
+        BASELINE_RATES = {  # kg CO2 per km (baseline diesel)
+            "delhi_mumbai":      0.94,
+            "chennai_bangalore": 0.88,
+            "kolkata_patna":     0.91,
+        }
+        rate = BASELINE_RATES.get(route_id, 0.91)
+        # Distance covered in 2s at given speed
+        dist_km = speed_kmph * (2 / 3600)
+        expected_co2 = rate * dist_km
+        return round(max(0.0, expected_co2 - co2_kg), 4)
 
     return co2_table.select(
         *pw.this,
-        co2_saved_kg=co2_saved(pw.this.route_id, pw.this.co2_kg),
+        co2_saved_kg=co2_rate_saved(
+            pw.this.route_id, pw.this.co2_kg, pw.this.speed_kmph
+        ),
     )
+

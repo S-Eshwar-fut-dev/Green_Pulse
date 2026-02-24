@@ -1,36 +1,38 @@
 import os
-import pathway as pw
-from pathway.xpacks.llm.splitters import TokenCountSplitter
-from pathway.xpacks.llm.embedders import OpenAIEmbedder
-from pathway.xpacks.llm.document_store import DocumentStore
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+_CHUNKS: list[dict] = []  # {text: str, source: str}
 
 
-def build_document_store() -> DocumentStore:
-    """Build a Pathway Document Store over the /data directory.
+def load_documents() -> None:
+    """Load and chunk all /data .txt files into memory."""
+    global _CHUNKS
+    _CHUNKS = []
+    for fname in sorted(os.listdir(DATA_DIR)):
+        if not fname.endswith(".txt"):
+            continue
+        fpath = os.path.join(DATA_DIR, fname)
+        source = fname.replace(".txt", "").replace("_", " ").title()
+        with open(fpath, "r", encoding="utf-8") as f:
+            content = f.read()
+        # Split into 500-char overlapping chunks
+        size, overlap = 500, 100
+        for i in range(0, len(content), size - overlap):
+            chunk = content[i:i + size].strip()
+            if len(chunk) > 80:
+                _CHUNKS.append({"text": chunk, "source": source})
 
-    Uses streaming file ingestion with auto-update on file change.
-    Applies token-based chunking and OpenAI/Gemini-compatible embeddings.
-    Supports BM25 + semantic hybrid retrieval.
-    """
-    docs = pw.io.plaintext.read(
-        os.path.abspath(DATA_DIR),
-        mode="streaming",
-        with_metadata=True,
-    )
 
-    splitter = TokenCountSplitter(max_tokens=400, min_tokens=50)
-
-    embedder = OpenAIEmbedder(
-        model="text-embedding-3-small",
-        api_key=os.environ.get("GEMINI_API_KEY", os.environ.get("OPENAI_API_KEY", "")),
-    )
-
-    store = DocumentStore(
-        docs=docs,
-        splitter=splitter,
-        embedder=embedder,
-    )
-
-    return store
+def retrieve(question: str, top_k: int = 5) -> list[dict]:
+    """BM25-style keyword retrieval over loaded chunks."""
+    if not _CHUNKS:
+        load_documents()
+    q_words = set(question.lower().split())
+    scored = []
+    for chunk in _CHUNKS:
+        score = sum(1 for w in q_words if w in chunk["text"].lower())
+        if score > 0:
+            scored.append((score, chunk))
+    scored.sort(key=lambda x: x[0], reverse=True)
+    results = [c for _, c in scored[:top_k]]
+    return results if results else _CHUNKS[:top_k]

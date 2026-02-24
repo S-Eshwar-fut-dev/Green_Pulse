@@ -3,8 +3,12 @@ import json
 import math
 import random
 import os
+import sys
 import threading
 import pathway as pw
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+from config import DEMO_SPIKE_PATH
 
 ROUTES = {
     "delhi_mumbai": [
@@ -35,7 +39,6 @@ VEHICLES = {
     "kolkata_patna": ["TRK-KL-001", "TRK-KL-002", "TRK-KL-003"],
 }
 
-DEMO_SPIKE_PATH = "/tmp/demo_spike.json"
 
 
 def _interpolate_route(waypoints: list[tuple], progress: float) -> tuple[float, float]:
