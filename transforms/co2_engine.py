@@ -18,10 +18,7 @@ References:
     - India NLP 2022 Annex C: Freight Emission Baselines
 """
 
-from __future__ import annotations
-
 import logging
-from typing import Optional
 
 import pathway as pw
 

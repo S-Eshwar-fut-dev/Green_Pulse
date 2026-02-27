@@ -9,9 +9,9 @@ Author: S-Eshwar-fut-dev
 License: MIT
 """
 
-import math
 import logging
-from typing import List, Tuple, Dict, Optional
+import math
+
 import pathway as pw
 
 # Configure module-level logging for robust error handling
@@ -22,7 +22,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 DEVIATION_THRESHOLD_KM: float = 2.0
 CO2_PENALTY_PER_KM_KG: float = 0.4
 
-ROUTE_CORRIDORS: Dict[str, List[Tuple[float, float]]] = {
+ROUTE_CORRIDORS: dict[str, list[tuple[float, float]]] = {
     "delhi_mumbai": [
         (28.6139, 77.2090),
         (27.1767, 78.0081),
@@ -47,7 +47,7 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
     Returns:
         float: Distance in kilometers.
     """
-    R = 6371.0 # Radius of earth in km
+    earth_radius_km = 6371.0  # Radius of earth in km
     try:
         d_lat = math.radians(lat2 - lat1)
         d_lon = math.radians(lon2 - lon1)
@@ -57,7 +57,7 @@ def haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
             * math.cos(math.radians(lat2))
             * math.sin(d_lon / 2) ** 2
         )
-        return R * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+        return earth_radius_km * 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     except Exception as e:
         logger.error(f"Error calculating Haversine distance: {e}")
         return 0.0
@@ -81,12 +81,12 @@ def check_deviation(lat: float, lon: float, route_id: str) -> str:
             return "OK|deviation_km=0.0|extra_co2_kg=0.0"
 
         dist_km = min(haversine_km(lat, lon, wp_lat, wp_lon) for wp_lat, wp_lon in waypoints)
-        
+
         if dist_km > DEVIATION_THRESHOLD_KM:
             extra_co2 = round(dist_km * CO2_PENALTY_PER_KM_KG, 2)
             logger.warning(f"Route deviation detected on {route_id}. Penalty: {extra_co2}kg CO2")
             return f"ROUTE_DEVIATION_ALERT|deviation_km={dist_km:.2f}|extra_co2_kg={extra_co2}"
-        
+
         return "OK"
     except Exception as e:
         logger.error(f"Failed to check deviation: {e}")

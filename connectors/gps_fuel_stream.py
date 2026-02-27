@@ -8,8 +8,9 @@ latitude, longitude, fuel consumption, and vehicle speed.
 Author: S-Eshwar-fut-dev
 """
 
-import time
 import logging
+import time
+
 import pathway as pw
 
 logger = logging.getLogger(__name__)
