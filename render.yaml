@@ -1,7 +1,7 @@
 services:
   # The Background Worker runs the infinite Python data pipeline
   - type: worker
-    name: greenpulse-pipeline
+    name: routezero-pipeline
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "python main_pipeline.py"
@@ -13,7 +13,7 @@ services:
 
   # The Web Service runs the FastAPI server
   - type: web
-    name: greenpulse-api
+    name: routezero-api
     env: python
     buildCommand: "pip install -r requirements.txt && pip install uvicorn"
     startCommand: "python -m uvicorn rag.api_server:app --host 0.0.0.0 --port $PORT"

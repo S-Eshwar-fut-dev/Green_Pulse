@@ -35,7 +35,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
                         <Leaf size={20} color="#0F172A" strokeWidth={2.5} />
                     </div>
                     <div style={{ fontSize: "1.15rem", fontWeight: 700, color: "#fff", display: "flex", gap: 6 }}>
-                        <span>GreenPulse</span>
+                        <span>RouteZero</span>
                         <span style={{ color: "#8b949e", fontWeight: 400 }}>Enterprise</span>
                     </div>
                 </div>

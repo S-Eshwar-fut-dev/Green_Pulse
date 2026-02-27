@@ -1,8 +1,8 @@
 {
-  "name": "greenpulse-frontend",
-  "version": "1.0.0",
+  "name": "routezero-frontend",
+  "version": "2.0.0",
   "private": true,
-  "description": "Green Pulse - Intelligent logistics orchestration platform for reducing Scope 1 and Scope 3 CO2 emissions.",
+  "description": "RouteZero — Real-time carbon intelligence dashboard for India's logistics sector.",
   "author": "S-Eshwar-fut-dev",
   "license": "MIT",
   "repository": {
@@ -15,7 +15,9 @@
     "co2-reduction",
     "ai",
     "nextjs",
-    "hackathon"
+    "hackathon",
+    "pathway",
+    "india"
   ],
   "scripts": {
     "dev": "next dev",

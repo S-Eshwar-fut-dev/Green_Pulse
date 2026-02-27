@@ -1,11 +1,11 @@
-# Contributing to Green Pulse
+# Contributing to RouteZero
 
-First off, thank you for considering contributing to Green Pulse! It's people like you that make Green Pulse such a great tool.
+First off, thank you for considering contributing to RouteZero! It's people like you that make RouteZero such a great tool.
 
 ## How Can I Contribute?
 
 ### Reporting Bugs
-This section guides you through submitting a bug report for Green Pulse. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior, and find related reports.
+This section guides you through submitting a bug report for RouteZero. Following these guidelines helps maintainers and the community understand your report, reproduce the behavior, and find related reports.
 
 - Use a clear and descriptive title.
 - Describe the exact steps which reproduce the problem in as many details as possible.
@@ -16,14 +16,14 @@ This section guides you through submitting an enhancement suggestion, including 
 
 - Use a clear and descriptive title.
 - Provide a step-by-step description of the suggested enhancement.
-- Explain why this enhancement would be useful to most Green Pulse users.
+- Explain why this enhancement would be useful to most RouteZero users.
 
 ### Pull Requests
 The process described here has several goals:
-- Maintain Green Pulse's quality
+- Maintain RouteZero's quality
 - Fix problems that are important to users
-- Engage the community in working toward the best possible Green Pulse
-- Enable a sustainable system for Green Pulse's maintainers to review contributions
+- Engage the community in working toward the best possible RouteZero
+- Enable a sustainable system for RouteZero's maintainers to review contributions
 
 Please follow these steps to have your contribution considered by the maintainers:
 1. Follow all instructions in the template

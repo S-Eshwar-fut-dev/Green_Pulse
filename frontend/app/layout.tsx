@@ -7,7 +7,7 @@ import ClientShell from "@/components/ClientShell";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
-  title: "GreenPulse — Logistics Intelligence Platform",
+  title: "RouteZero — Logistics Intelligence Platform",
   description: "Real-time Intelligent Logistics Orchestration for Indian Freight, powered by Pathway AI.",
 };
 

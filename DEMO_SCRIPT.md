@@ -1,4 +1,4 @@
-# GreenPulse v2.0 — 3-Minute Demo Script
+# RouteZero v2.0 — 3-Minute Demo Script
 ## Hack For Green Bharat | Exact Words to Say
 
 ---
@@ -12,7 +12,7 @@
 
 > Every green polyline on this map is a live corridor. Every dot is a truck updating every two seconds. This number here — [point to CO₂ Saved KPI card, glowing green] — is going up right now.
 
-> India's logistics sector emits 13.5% of all national greenhouse gases. GreenPulse is India's first real-time carbon intelligence layer for logistics."
+> India's logistics sector emits 13.5% of all national greenhouse gases. RouteZero is India's first real-time carbon intelligence layer for logistics."
 
 *[Pause 3 seconds. Let the CO₂ Saved number tick.]*
 
@@ -39,9 +39,9 @@
 
 ---
 
-### MINUTE 3 — GreenAI + Compliance Close (2:00–3:00)
+### MINUTE 3 — RouteZero AI + Compliance Close (2:00–3:00)
 
-*[Click the 💬 GreenAI button in the sidebar — the chat drawer slides in from the right.]*
+*[Click the 💬 RouteZero AI button in the sidebar — the chat drawer slides in from the right.]*
 
 **Ask:** "Why is this truck over-emitting and what should we do?"
 
@@ -51,7 +51,7 @@
 
 *[Close the drawer. Navigate to /analytics.]*
 
-> "India's National Logistics Policy 2022 mandates a 20% reduction in per-route CO₂ by 2027. GreenPulse tracks that — not quarterly — second by second. [Point to NLP Compliance bars.] Delhi-Mumbai is at 82%. Kolkata-Patna is at 90%.
+> "India's National Logistics Policy 2022 mandates a 20% reduction in per-route CO₂ by 2027. RouteZero tracks that — not quarterly — second by second. [Point to NLP Compliance bars.] Delhi-Mumbai is at 82%. Kolkata-Patna is at 90%.
 
 > This is not a dashboard. This is the carbon intelligence layer India's logistics didn't have. Thank you."
 
@@ -64,12 +64,12 @@
 - [ ] CO₂ Saved KPI shows a non-zero, growing green number
 - [ ] Navigate: Overview → Fleet List → click a truck → Vehicle Detail → Analytics → Alert Center
 - [ ] Test "Trigger Spike Alert" — marker turns red, alert appears in Resolution Center
-- [ ] Open GreenAI chat drawer — confirm quick questions return answers
+- [ ] Open RouteZero AI chat drawer — confirm quick questions return answers
 - [ ] Record 60-second backup video of full working demo
 - [ ] Have `.env` with valid `GEMINI_API_KEY` on the demo machine
 - [ ] Close all other browser tabs — projector in windowed mode, not fullscreen
 
 ## Backup Plan (If Network/API Fails)
-GreenAI automatically falls back to pre-cached answers for all 5 demo questions.
+RouteZero AI automatically falls back to pre-cached answers for all 5 demo questions.
 The `live_data_used` badge will show false, but the answers will still be accurate.
-Say: *"GreenPulse includes a resilience layer — even when the LLM API is unreachable, the system serves pre-validated answers from the last known state."*
+Say: *"RouteZero includes a resilience layer — even when the LLM API is unreachable, the system serves pre-validated answers from the last known state."*

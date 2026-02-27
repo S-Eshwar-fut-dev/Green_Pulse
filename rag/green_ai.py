@@ -1,5 +1,5 @@
 """
-GreenAI Retrieval-Augmented Generation (RAG) Module.
+RouteZero AI — Retrieval-Augmented Generation (RAG) Module.
 
 Utilizes Google Gemini 1.5 Pro with BM25 retrieval over IPCC AR6 WGIII
 and India's National Logistics Policy (NLP 2022) to resolve supply-chain bottlenecks.

@@ -1,4 +1,4 @@
-# 🌿 GreenPulse — Real-Time Carbon Intelligence for India's Logistics
+# 🌿 RouteZero — Real-Time Logistics Orchestration & Carbon Intelligence for India
 
 [![Python 3.11](https://img.shields.io/badge/Python-3.11-blue?logo=python)](https://python.org)
 [![Next.js 14](https://img.shields.io/badge/Next.js-14-black?logo=next.js)](https://nextjs.org)
@@ -6,7 +6,7 @@
 [![Gemini 1.5 Pro](https://img.shields.io/badge/AI-Gemini%201.5%20Pro-orange?logo=google)](https://deepmind.google/gemini)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-> **India's first real-time carbon ledger for freight logistics.** GreenPulse streams GPS telemetry from trucks, computes CO₂ in real time using IPCC AR6 emission factors, predicts ETA delays before they happen, and lets fleet operators ask natural-language questions about their fleet's carbon footprint — answered by Gemini 1.5 Pro with citations from India's NLP 2022 policy.
+> **India's first real-time carbon ledger for freight logistics.** RouteZero streams GPS telemetry from trucks, computes CO₂ in real time using IPCC AR6 emission factors, predicts ETA delays before they happen, and lets fleet operators ask natural-language questions about their fleet's carbon footprint — answered by Gemini 1.5 Pro with citations from India's NLP 2022 policy.
 
 **Built for Hack For Green Bharat 2026.**
 
@@ -14,7 +14,7 @@
 
 ## 📸 Demo
 
-| Fleet Map (Live) | Rolling Emissions Chart | GreenAI Chat |
+| Fleet Map (Live) | Rolling Emissions Chart | RouteZero AI Chat |
 |:---:|:---:|:---:|
 | Dark map, 3 corridors, ghost path predictions | 30-min sliding window per route | Gemini answers with NLP 2022 citations |
 
@@ -75,8 +75,8 @@
 ### 1. Clone & configure
 
 ```bash
-git clone https://github.com/S-Eshwar-fut-dev/greenpulse.git
-cd greenpulse
+git clone https://github.com/S-Eshwar-fut-dev/Green_Pulse.git
+cd Green_Pulse
 cp .env.example .env
 # Edit .env and add your GEMINI_API_KEY
 ```
@@ -122,7 +122,7 @@ python simulate_pipeline.py
 
 ## ⚙️ Development Setup & Makefile
 
-To run the Green Pulse Command Center locally under the new containerized architecture:
+To run the RouteZero Command Center locally under the new containerized architecture:
 
 ### 1. Clone the repository
 ```bash
@@ -138,7 +138,7 @@ npm install
 
 ### 3. Environment Variables Reference
 Create a `.env.local` file in the `frontend` directory. Ensure the following keys are populated:
-* `GEMINI_API_KEY`: Strictly required for the GreenAI Co-Pilot to analyze natural language queries.
+* `GEMINI_API_KEY`: Strictly required for the RouteZero AI Co-Pilot to analyze natural language queries.
 * `PATHWAY_REST_ENDPOINT`: (Optional) Override local Pathway container IP if deploying remotely.
 
 ### 4. Run the Development Server
@@ -151,7 +151,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 ## 📁 Project Structure
 
 ```
-greenpulse/
+routezero/
 ├── 📄 README.md
 ├── 📄 requirements.txt
 ├── 📄 .env.example
@@ -192,12 +192,12 @@ greenpulse/
 │   │   ├── page.tsx                # Main dashboard
 │   │   └── api/
 │   │       ├── fleet/route.ts      # Fleet data proxy
-│   │       └── chat/route.ts       # GreenAI chat proxy
+│   │       └── chat/route.ts       # RouteZero AI chat proxy
 │   ├── 📂 components/
 │   │   ├── FleetMap.tsx            # Leaflet map with corridors + ghost paths
 │   │   ├── MetricsPanel.tsx        # CO₂ stats + alert counters
 │   │   ├── RollingChart.tsx        # Recharts rolling emissions chart
-│   │   └── GreenAIChat.tsx         # Gemini chat interface
+│   │   └── RouteZeroAIChat.tsx     # Gemini chat interface
 │   └── 📂 lib/
 │       └── types.ts                # Shared TypeScript interfaces
 │
@@ -218,7 +218,7 @@ greenpulse/
 - Ghost path predictions: dashed lines show predicted route to destination, turning red when ETA is `DELAYED`
 - Live CO₂ intensity coloring (green → amber → red) per truck marker
 
-### 🤖 GreenAI Co-Pilot
+### 🤖 RouteZero AI Co-Pilot
 - Ask: *"Why is truck TRK_003 over-emitting on the Delhi–Mumbai corridor?"*
 - Get: Grounded answer citing NLP 2022 compliance targets + IPCC AR6 factors + live fleet data
 - Powered by Gemini 1.5 Pro with BM25 retrieval from policy documents
@@ -232,7 +232,7 @@ greenpulse/
 
 ## 🔬 Emission Calculation
 
-GreenPulse uses **IPCC AR6 Working Group III (2022)** emission factors:
+RouteZero uses **IPCC AR6 Working Group III (2022)** emission factors:
 
 ```python
 # Base factor: 0.89 kg CO₂ per km (heavy freight, diesel)
@@ -254,7 +254,7 @@ Cold-chain vehicles apply an additional **refrigeration load factor (1.25×)** p
 | `/api/fleet` | GET | Current state of all vehicles |
 | `/api/fleet-intel` | GET | Fleet + ETA + window aggregations |
 | `/api/route-summary` | GET | Per-route CO₂ totals + compliance % |
-| `/api/chat` | POST | GreenAI query (body: `{"query": "..."}`) |
+| `/api/chat` | POST | RouteZero AI query (body: `{"query": "..."}`) |
 | `/api/alerts` | GET | Alert history (last 50 events) |
 
 ---
@@ -276,7 +276,7 @@ Cold-chain vehicles apply an additional **refrigeration load factor (1.25×)** p
 3. Watch the map — ghost paths update every 2 seconds
 4. Trigger a demo spike: `python -c "import simulate_pipeline; simulate_pipeline.trigger_spike('TRK_003')"`
 5. Observe `HIGH_EMISSION_ALERT` on the map + metrics panel
-6. Ask GreenAI: *"Which route has the worst NLP 2022 compliance and why?"*
+6. Ask RouteZero AI: *"Which route has the worst NLP 2022 compliance and why?"*
 
 ---
 

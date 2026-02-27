@@ -2,7 +2,7 @@
 
 ## Supported Versions
 
-Green Pulse is actively maintained. Security updates are provided for the `main` branch corresponding to the latest release.
+RouteZero is actively maintained. Security updates are provided for the `main` branch corresponding to the latest release.
 
 | Version | Supported          |
 | ------- | ------------------ |
