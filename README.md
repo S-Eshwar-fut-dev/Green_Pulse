@@ -75,7 +75,7 @@
 ### 1. Clone & configure
 
 ```bash
-git clone https://github.com/S-Eshwar-fut-dev/Green_Pulse.git
+git clone https://github.com/S-Eshwar-fut-dev/Route_Zero.git
 cd Green_Pulse
 cp .env.example .env
 # Edit .env and add your GEMINI_API_KEY
@@ -126,8 +126,8 @@ To run the RouteZero Command Center locally under the new containerized architec
 
 ### 1. Clone the repository
 ```bash
-git clone https://github.com/S-Eshwar-fut-dev/Green_Pulse.git
-cd Green_Pulse
+git clone https://github.com/S-Eshwar-fut-dev/Route_Zero.git
+cd Route_Zero
 ```
 
 ### 2. Install Dependencies (Frontend)
@@ -146,7 +146,7 @@ Create a `.env.local` file in the `frontend` directory. Ensure the following key
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser.
+Open localhost:3000 or routezero-390xdl6zb-eshwar-ss-projects.vercel.app  with your browser.
 
 ## 📁 Project Structure
 
