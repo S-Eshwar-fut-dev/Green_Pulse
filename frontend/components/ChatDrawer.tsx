@@ -37,7 +37,7 @@ function getFallback(q: string): string {
     if (lq.includes("cold") || lq.includes("temp") || lq.includes("status")) return FALLBACK_ANSWERS.cold;
     if (lq.includes("fine") || lq.includes("exposure") || lq.includes("overload")) return FALLBACK_ANSWERS.fine;
     if (lq.includes("comply") || lq.includes("policy") || lq.includes("target")) return FALLBACK_ANSWERS.comply;
-    return "GreenAI is reconnecting. Ask about SLAs, route delays, cold chain status, or fine exposure.";
+    return "RouteZero AI is reconnecting. Ask about SLAs, route delays, cold chain status, or fine exposure.";
 }
 
 export default function ChatDrawer() {
@@ -93,7 +93,7 @@ export default function ChatDrawer() {
                 {/* Header */}
                 <div style={{ padding: "16px 20px", borderBottom: "1px solid #1e293b", display: "flex", alignItems: "center" }}>
                     <div>
-                        <div style={{ color: "#00ff87", fontWeight: 700, fontSize: "0.85rem" }}>💬 GreenAI</div>
+                        <div style={{ color: "#00ff87", fontWeight: 700, fontSize: "0.85rem" }}>💬 RouteZero AI</div>
                         <div style={{ color: "#4b5563", fontSize: "0.68rem" }}>Powered by Gemini 1.5 Pro + Live Fleet Data</div>
                     </div>
                     <button
@@ -136,7 +136,7 @@ export default function ChatDrawer() {
                     ))}
                     {loading && (
                         <div style={{ color: "#8b949e", fontSize: "0.85rem", padding: "10px 16px", background: "#111827", border: "1px solid #1e293b", borderRadius: 12, width: "fit-content" }}>
-                            GreenAI is thinking…
+                            RouteZero AI is thinking…
                         </div>
                     )}
                     <div ref={bottomRef} />

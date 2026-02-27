@@ -7,6 +7,8 @@ import { useState, useEffect } from "react";
 import { useFleet, driverName } from "@/lib/FleetContext";
 import KpiCard from "@/components/KpiCard";
 import { postQuery } from "@/lib/api";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 const IndiaMap = dynamic(() => import("@/components/IndiaMap"), { ssr: false });
 
@@ -214,11 +216,11 @@ export default function VehicleDetailPage() {
                 </div>
             </div>
 
-            {/* GreenAI Insights */}
+            {/* RouteZero AI Insights */}
             <div style={{ background: "#1a2332", border: "1px solid #1e293b", borderRadius: 14, padding: 20 }}>
                 <div style={{ display: "flex", alignItems: "center", marginBottom: 16 }}>
                     <h3 style={{ color: "#f0f6fc", margin: 0, fontSize: "0.82rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.06em" }}>
-                        💡 GreenAI Analysis
+                        💡 RouteZero AI Analysis
                     </h3>
                     <button onClick={fetchInsight} disabled={insightLoading}
                         style={{ marginLeft: "auto", background: "#0F172A", border: "1px solid #1e293b", borderRadius: 8, padding: "4px 12px", color: "#8b949e", fontSize: "0.72rem", cursor: "pointer" }}>
@@ -232,8 +234,8 @@ export default function VehicleDetailPage() {
                         ))}
                     </div>
                 ) : (
-                    <div style={{ color: "#f0f6fc", fontSize: "0.85rem", lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
-                        {insight}
+                    <div style={{ color: "#f0f6fc", fontSize: "0.85rem", lineHeight: 1.6 }}>
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>{insight || ""}</ReactMarkdown>
                     </div>
                 )}
             </div>

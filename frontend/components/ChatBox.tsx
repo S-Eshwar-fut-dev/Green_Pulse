@@ -41,7 +41,7 @@ function getFallback(question: string): string {
         return FALLBACK_ANSWERS["efficient"];
     if (q.includes("comply") || q.includes("policy") || q.includes("nlp") || q.includes("target"))
         return FALLBACK_ANSWERS["comply"];
-    return "**Answer:** GreenAI is reconnecting. The fleet is operating across 3 corridors. Ask about emissions, anomalies, savings, or NLP compliance.\n**Action:** Ensure the FastAPI server is running on port 8000.";
+    return "**Answer:** RouteZero AI is reconnecting. The fleet is operating across 3 corridors. Ask about emissions, anomalies, savings, or NLP compliance.\n**Action:** Ensure the FastAPI server is running on port 8000.";
 }
 
 export default function ChatBox() {
@@ -84,7 +84,7 @@ export default function ChatBox() {
     return (
         <div style={{ background: "#161b22", border: "1px solid #30363d", borderRadius: 12, display: "flex", flexDirection: "column", height: "100%" }}>
             <div style={{ padding: "12px 20px", borderBottom: "1px solid #30363d" }}>
-                <span style={{ color: "#00ff87", fontWeight: 700, fontSize: "0.85rem" }}>💬 ASK GREENAI</span>
+                <span style={{ color: "#00ff87", fontWeight: 700, fontSize: "0.85rem" }}>💬 ASK ROUTEZERO AI</span>
             </div>
 
             <div style={{ padding: "8px 12px", borderBottom: "1px solid #30363d", display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -128,7 +128,7 @@ export default function ChatBox() {
                 {loading && (
                     <div style={{ display: "flex", justifyContent: "flex-start" }}>
                         <div style={{ background: "#21262d", border: "1px solid #30363d", borderRadius: 12, padding: "10px 16px", color: "#8b949e", fontSize: "0.875rem" }}>
-                            GreenAI is thinking…
+                            RouteZero AI is thinking…
                         </div>
                     </div>
                 )}

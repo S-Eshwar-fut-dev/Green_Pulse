@@ -3,11 +3,12 @@
 import { type ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Leaf, Search, Bell, TriangleAlert } from "lucide-react";
+import { Leaf, Search, Bell, TriangleAlert, MessageCircle } from "lucide-react";
 import { useFleet } from "@/lib/FleetContext";
+import ChatDrawer from "@/components/ChatDrawer";
 
 export default function AppShell({ children }: { children: ReactNode }) {
-    const { stats } = useFleet();
+    const { stats, chatOpen, setChatOpen } = useFleet();
     const pathname = usePathname();
 
     const NAV_ITEMS = [
@@ -112,6 +113,43 @@ export default function AppShell({ children }: { children: ReactNode }) {
             <main style={{ flex: 1, display: "flex", flexDirection: "column", position: "relative", overflow: "hidden" }}>
                 {children}
             </main>
+
+            {/* Floating RouteZero AI Chatbot Button */}
+            <button
+                onClick={() => setChatOpen(!chatOpen)}
+                aria-label="Open RouteZero AI Chat"
+                style={{
+                    position: "fixed",
+                    bottom: 24,
+                    right: 24,
+                    width: 56,
+                    height: 56,
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, #10B981, #059669)",
+                    border: "none",
+                    color: "#fff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    cursor: "pointer",
+                    boxShadow: "0 4px 20px rgba(16, 185, 129, 0.4)",
+                    zIndex: 997,
+                    transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                }}
+                onMouseEnter={e => {
+                    (e.currentTarget as HTMLButtonElement).style.transform = "scale(1.1)";
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 6px 28px rgba(16, 185, 129, 0.6)";
+                }}
+                onMouseLeave={e => {
+                    (e.currentTarget as HTMLButtonElement).style.transform = "scale(1)";
+                    (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 4px 20px rgba(16, 185, 129, 0.4)";
+                }}
+            >
+                <MessageCircle size={24} />
+            </button>
+
+            {/* RouteZero AI Chat Drawer */}
+            <ChatDrawer />
         </div>
     );
 }
