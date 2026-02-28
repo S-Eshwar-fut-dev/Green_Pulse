@@ -1,16 +1,27 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useFleet } from "@/lib/FleetContext";
 import { BarChart, Bar, XAxis, ResponsiveContainer, Cell } from "recharts";
 import { Clock, Fuel, TriangleAlert, MoveRight } from "lucide-react";
 import Link from "next/link";
+import MetricModal from "@/components/MetricModal";
 
 const IndiaMap = dynamic(() => import("@/components/IndiaMap"), { ssr: false });
 
+interface Ranking {
+    vehicle_id: string;
+    route: string;
+    co2_kg: number;
+    co2_per_km: number;
+    score: number;
+    status: string;
+}
 export default function OverviewPage() {
     const { vehicles, anomalies, stats, selectedVehicleId, setSelectedVehicleId } = useFleet();
+    const [activeModal, setActiveModal] = useState<string | null>(null);
+    const [rankings, setRankings] = useState<Ranking[]>([]);
 
     const activeVehiclesCount = vehicles.length;
     const totalCo2 = stats.totalCo2.toFixed(0);
@@ -18,6 +29,29 @@ export default function OverviewPage() {
 
     const onTimePct = activeVehiclesCount > 0 ? ((stats.onTimeCount / activeVehiclesCount) * 100).toFixed(1) : "0.0";
     const totalFuel = vehicles.reduce((s, v) => s + (v.fuel_consumed_liters || 0), 0).toFixed(0);
+
+    useEffect(() => {
+        async function fetchRankings() {
+            try {
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+                const res = await fetch(`${apiUrl}/api/fleet-rankings`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setRankings(data.data || []);
+                }
+            } catch {
+                setRankings(vehicles.map(v => ({
+                    vehicle_id: v.vehicle_id,
+                    route: v.route_id,
+                    co2_kg: v.co2_kg || 0,
+                    co2_per_km: 0.03,
+                    score: 3,
+                    status: v.status,
+                })));
+            }
+        }
+        if (vehicles.length > 0) fetchRankings();
+    }, [vehicles]);
 
     const trendData = [
         { time: "08:00", val: 20 },
@@ -58,7 +92,7 @@ export default function OverviewPage() {
                 <div style={{ position: "absolute", bottom: 40, left: 40, right: 40, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, zIndex: 1000 }}>
 
                     {/* Active Vehicles */}
-                    <div style={{ background: "rgba(26, 35, 50, 0.85)", backdropFilter: "blur(10px)", border: "1px solid #1e293b", borderRadius: 12, padding: "16px 20px" }}>
+                    <div onClick={() => setActiveModal("vehicles")} style={{ background: "rgba(26, 35, 50, 0.85)", backdropFilter: "blur(10px)", border: "1px solid #1e293b", borderRadius: 12, padding: "16px 20px", cursor: "pointer" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                             <span style={{ color: "#8b949e", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.5px", textTransform: "uppercase" }}>Active Vehicles</span>
                             <div style={{ background: "#10B981", padding: 4, borderRadius: 6 }}>
@@ -72,7 +106,7 @@ export default function OverviewPage() {
                     </div>
 
                     {/* Total CO2 */}
-                    <div style={{ background: "rgba(26, 35, 50, 0.85)", backdropFilter: "blur(10px)", border: "1px solid #1e293b", borderRadius: 12, padding: "16px 20px" }}>
+                    <div onClick={() => setActiveModal("co2")} style={{ background: "rgba(26, 35, 50, 0.85)", backdropFilter: "blur(10px)", border: "1px solid #1e293b", borderRadius: 12, padding: "16px 20px", cursor: "pointer" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                             <span style={{ color: "#8b949e", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.5px", textTransform: "uppercase" }}>Total CO2 (Today)</span>
                             <div style={{ color: "#10B981", fontSize: "0.75rem", fontWeight: 700 }}>CO₂</div>
@@ -84,7 +118,7 @@ export default function OverviewPage() {
                     </div>
 
                     {/* Avg Efficiency */}
-                    <div style={{ background: "rgba(26, 35, 50, 0.85)", backdropFilter: "blur(10px)", border: "1px solid #1e293b", borderRadius: 12, padding: "16px 20px" }}>
+                    <div onClick={() => setActiveModal("efficiency")} style={{ background: "rgba(26, 35, 50, 0.85)", backdropFilter: "blur(10px)", border: "1px solid #1e293b", borderRadius: 12, padding: "16px 20px", cursor: "pointer" }}>
                         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
                             <span style={{ color: "#8b949e", fontSize: "0.75rem", fontWeight: 600, letterSpacing: "0.5px", textTransform: "uppercase" }}>Avg Efficiency</span>
                             <div style={{ background: "#10B981", borderRadius: "50%", width: 14, height: 14, display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -217,9 +251,86 @@ export default function OverviewPage() {
                                 View All Fleet <MoveRight size={14} />
                             </Link>
                         </div>
+
+                        {/* Fleet Performance Rankings */}
+                        {rankings.length > 0 && (
+                            <div>
+                                <h2 style={{ color: "#8b949e", fontSize: "0.75rem", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: 16 }}>Fleet Performance Rankings</h2>
+                                <div style={{ background: "#1a2332", border: "1px solid #1e293b", borderRadius: 12, overflow: "hidden" }}>
+                                    {rankings.slice(0, 5).map((r, i) => (
+                                        <div key={r.vehicle_id} style={{
+                                            display: "flex", alignItems: "center", padding: "10px 16px",
+                                            borderBottom: i < 4 ? "1px solid #1e293b" : "none",
+                                        }}>
+                                            <span style={{ color: i < 3 ? "#00ff87" : "#f59e0b", fontSize: "0.85rem", fontWeight: 700, width: 24 }}>#{i + 1}</span>
+                                            <Link href={`/vehicle/${r.vehicle_id}`} style={{ color: "#f0f6fc", textDecoration: "none", fontSize: "0.82rem", fontWeight: 600, flex: 1 }}>{r.vehicle_id}</Link>
+                                            <span style={{ color: "#8b949e", fontSize: "0.72rem", marginRight: 12 }}>{r.co2_kg} kg</span>
+                                            <span style={{ color: r.score >= 4 ? "#00ff87" : r.score >= 3 ? "#f59e0b" : "#ef4444", fontSize: "0.72rem", fontWeight: 700 }}>{'★'.repeat(r.score)}{'☆'.repeat(5 - r.score)}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Carbon Report Link */}
+                        <Link href="/carbon-report" style={{
+                            display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+                            background: "#0d1421", border: "1px solid #1e293b", borderRadius: 10,
+                            padding: "10px 20px", color: "#00D4FF", fontSize: "0.82rem",
+                            fontWeight: 600, textDecoration: "none", marginTop: 8,
+                        }}>📊 Export Carbon Report <MoveRight size={14} /></Link>
                     </div>
                 </div>
             </div>
+
+            {/* KPI Modals */}
+            <MetricModal open={activeModal === "co2"} onClose={() => setActiveModal(null)} title="CO₂ Emissions Today">
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <div style={{ color: "#f0f6fc", fontSize: "2rem", fontWeight: 800 }}>{totalCo2} <span style={{ fontSize: "1rem", color: "#8b949e" }}>kg total</span></div>
+                    <div style={{ height: 200 }}>
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={trendData}>
+                                <XAxis dataKey="time" tick={{ fill: "#4b5563", fontSize: 10 }} axisLine={false} tickLine={false} />
+                                <Bar dataKey="val" radius={[4, 4, 0, 0]} fill="#10B981" maxBarSize={35} />
+                            </BarChart>
+                        </ResponsiveContainer>
+                    </div>
+                    <div style={{ color: "#8b949e", fontSize: "0.78rem" }}>CO₂ saved today: <strong style={{ color: "#00ff87" }}>{stats.totalSaved?.toFixed(1)} kg</strong></div>
+                </div>
+            </MetricModal>
+
+            <MetricModal open={activeModal === "vehicles"} onClose={() => setActiveModal(null)} title="Active Vehicles">
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                    <div style={{ color: "#f0f6fc", fontSize: "2rem", fontWeight: 800 }}>{activeVehiclesCount} <span style={{ fontSize: "1rem", color: "#8b949e" }}>active</span></div>
+                    {vehicles.map(v => (
+                        <Link key={v.vehicle_id} href={`/vehicle/${v.vehicle_id}`} style={{
+                            display: "flex", justifyContent: "space-between", padding: "8px 12px",
+                            background: "#111827", borderRadius: 8, color: "#f0f6fc",
+                            textDecoration: "none", fontSize: "0.82rem"
+                        }}>
+                            <span style={{ fontWeight: 600 }}>{v.vehicle_id}</span>
+                            <span style={{ color: v.status === "NORMAL" ? "#00ff87" : v.status === "WARNING" ? "#f59e0b" : "#ef4444" }}>{v.status.replace(/_/g, " ")}</span>
+                        </Link>
+                    ))}
+                </div>
+            </MetricModal>
+
+            <MetricModal open={activeModal === "efficiency"} onClose={() => setActiveModal(null)} title="Fleet CO₂ Efficiency">
+                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                    <div style={{ color: "#f0f6fc", fontSize: "2rem", fontWeight: 800 }}>{avgEff} <span style={{ fontSize: "1rem", color: "#8b949e" }}>km/L avg</span></div>
+                    <div style={{ color: "#8b949e", fontSize: "0.82rem" }}>On-time delivery: <strong style={{ color: "#3b82f6" }}>{onTimePct}%</strong></div>
+                    <div style={{ color: "#8b949e", fontSize: "0.82rem" }}>Total fuel consumed: <strong style={{ color: "#f59e0b" }}>{totalFuel} L</strong></div>
+                    {vehicles.map(v => {
+                        const eff = v.fuel_consumed_liters > 0 ? ((v.speed_kmph * (2 / 60)) / v.fuel_consumed_liters).toFixed(2) : "—";
+                        return (
+                            <div key={v.vehicle_id} style={{ display: "flex", justifyContent: "space-between", padding: "6px 0", borderBottom: "1px solid #1e293b", fontSize: "0.82rem" }}>
+                                <span style={{ color: "#f0f6fc" }}>{v.vehicle_id}</span>
+                                <span style={{ color: "#00D4FF" }}>{eff} km/L</span>
+                            </div>
+                        );
+                    })}
+                </div>
+            </MetricModal>
         </div>
     );
 }

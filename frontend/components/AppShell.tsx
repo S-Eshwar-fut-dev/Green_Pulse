@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Leaf, Search, Bell, TriangleAlert, MessageCircle } from "lucide-react";
@@ -14,9 +14,28 @@ export default function AppShell({ children }: { children: ReactNode }) {
     const NAV_ITEMS = [
         { label: "Dashboard", href: "/overview" },
         { label: "Fleet", href: "/fleet" },
+        { label: "Booking", href: "/booking" },
+        { label: "Logistics", href: "/logistics" },
         { label: "Emissions", href: "/analytics" },
-        { label: "Reports", href: "/shipments" },
     ];
+
+    const [pathwayStatus, setPathwayStatus] = useState<"LIVE" | "DELAYED" | "OFFLINE">("OFFLINE");
+
+    useEffect(() => {
+        async function checkPathway() {
+            try {
+                const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+                const res = await fetch(`${apiUrl}/api/pathway-status`);
+                if (res.ok) {
+                    const data = await res.json();
+                    setPathwayStatus(data.status as "LIVE" | "DELAYED" | "OFFLINE");
+                }
+            } catch { setPathwayStatus("OFFLINE"); }
+        }
+        checkPathway();
+        const interval = setInterval(checkPathway, 10000);
+        return () => clearInterval(interval);
+    }, []);
 
     return (
         <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh", background: "#0F172A" }}>

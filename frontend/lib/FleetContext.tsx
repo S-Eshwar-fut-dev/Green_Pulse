@@ -10,12 +10,12 @@ const DRIVER_NAMES: Record<string, string> = {
     "TRK-DL-002": "Suresh Patel",
     "TRK-DL-003": "Mahesh Singh",
     "TRK-DL-004": "Dinesh Verma",
-    "TRK-CH-001": "Karthik Rajan",
-    "TRK-CH-002": "Venkat Naidu",
-    "TRK-CH-003": "Jarnail Kanna",
-    "TRK-KL-001": "Debashis Roy",
-    "TRK-KL-002": "Pranab Das",
-    "TRK-KL-003": "Sanjay Ghosh",
+    "TRK-CB-005": "Karthik Rajan",
+    "TRK-CB-006": "Venkat Naidu",
+    "TRK-CB-007": "Jarnail Kanna",
+    "TRK-KP-008": "Debashis Roy",
+    "TRK-KP-009": "Pranab Das",
+    "TRK-KP-010": "Sanjay Ghosh",
 };
 
 export function driverName(id: string): string {

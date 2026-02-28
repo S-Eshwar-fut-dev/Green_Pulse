@@ -55,7 +55,7 @@
                  │  • Fleet map (Leaflet)│
                  │  • Metrics panel     │
                  │  • Rolling chart     │
-                 │  • GreenAI chat UI   │
+                 │  • RouteZero AI chat │
                  └─────────────────────┘
 ```
 
@@ -76,7 +76,7 @@
 
 ```bash
 git clone https://github.com/S-Eshwar-fut-dev/Route_Zero.git
-cd Green_Pulse
+cd Route_Zero
 cp .env.example .env
 # Edit .env and add your GEMINI_API_KEY
 ```

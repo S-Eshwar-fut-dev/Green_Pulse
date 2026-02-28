@@ -1,55 +1,77 @@
 "use client";
 
-import dynamic from "next/dynamic";
-import { useEffect, useRef, useMemo } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
+import L from "leaflet";
 import type { VehicleEvent } from "@/lib/types";
 
-const MapContainer = dynamic(() => import("react-leaflet").then(m => m.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import("react-leaflet").then(m => m.TileLayer), { ssr: false });
-const Marker = dynamic(() => import("react-leaflet").then(m => m.Marker), { ssr: false });
-const Popup = dynamic(() => import("react-leaflet").then(m => m.Popup), { ssr: false });
-const Polyline = dynamic(() => import("react-leaflet").then(m => m.Polyline), { ssr: false });
+/* ── Tile: CartoDB Dark Matter (free, no API key) ── */
+const TILE_URL = "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png";
 
-/* ── Route corridors matching backend exactly ── */
-const ROUTE_CORRIDORS: Record<string, [number, number][]> = {
-    delhi_mumbai: [
-        [28.6139, 77.2090], [27.1767, 78.0081], [25.4358, 81.8464],
-        [23.1765, 79.9864], [22.3072, 73.1812], [19.0760, 72.8777],
-    ],
-    chennai_bangalore: [
-        [13.0827, 80.2707], [12.9716, 79.1586],
-        [12.8406, 78.1148], [12.9716, 77.5946],
-    ],
-    kolkata_patna: [
-        [22.5726, 88.3639], [23.5204, 87.3119],
-        [24.7914, 85.0002], [25.5941, 85.1376],
-    ],
+/* ── Route definitions ── */
+const ROUTES = [
+    { id: "all", label: "All Routes" },
+    { id: "delhi_mumbai", label: "Delhi → Mumbai (NH48)" },
+    { id: "chennai_bangalore", label: "Chennai → Bangalore (NH44)" },
+    { id: "kolkata_patna", label: "Kolkata → Patna (NH19)" },
+];
+
+const ROUTE_DATA: Record<string, {
+    origin: { lat: number; lng: number; name: string };
+    destination: { lat: number; lng: number; name: string };
+    waypoints: [number, number][];
+    color: string;
+}> = {
+    delhi_mumbai: {
+        origin: { lat: 28.6139, lng: 77.2090, name: "Delhi" },
+        destination: { lat: 19.0760, lng: 72.8777, name: "Mumbai" },
+        waypoints: [
+            [28.6139, 77.2090], [27.4924, 77.6737], [27.1767, 78.0081],
+            [26.2183, 78.1828], [23.2599, 77.4126], [22.7196, 76.1320],
+            [22.3072, 73.1812], [19.0760, 72.8777],
+        ],
+        color: "#00D4FF",
+    },
+    chennai_bangalore: {
+        origin: { lat: 13.0827, lng: 80.2707, name: "Chennai" },
+        destination: { lat: 12.9716, lng: 77.5946, name: "Bangalore" },
+        waypoints: [
+            [13.0827, 80.2707], [12.9165, 79.1325],
+            [12.5186, 78.2137], [12.9716, 77.5946],
+        ],
+        color: "#00FF88",
+    },
+    kolkata_patna: {
+        origin: { lat: 22.5726, lng: 88.3639, name: "Kolkata" },
+        destination: { lat: 25.5941, lng: 85.1376, name: "Patna" },
+        waypoints: [
+            [22.5726, 88.3639], [23.6889, 86.9661],
+            [24.7914, 84.9994], [25.5941, 85.1376],
+        ],
+        color: "#FF6B35",
+    },
 };
 
-/* ── Per-route colors ── */
-const ROUTE_COLORS: Record<string, string> = {
-    delhi_mumbai: "#10B981",
-    chennai_bangalore: "#10B981",
-    kolkata_patna: "#10B981",
-};
+/* ── Checkpoints ── */
+const CHECKPOINTS = [
+    { lat: 26.92, lng: 77.56, label: "Toll — Kota Junction", type: "toll", route: "delhi_mumbai" },
+    { lat: 24.58, lng: 77.32, label: "Weigh — Bhopal Bypass", type: "weigh", route: "delhi_mumbai" },
+    { lat: 22.72, lng: 75.86, label: "Rest — Indore Stop", type: "rest", route: "delhi_mumbai" },
+    { lat: 12.74, lng: 79.04, label: "Toll — Vellore Gate", type: "toll", route: "chennai_bangalore" },
+    { lat: 12.52, lng: 78.21, label: "Weigh — Krishnagiri", type: "weigh", route: "chennai_bangalore" },
+    { lat: 23.68, lng: 86.97, label: "Toll — Dhanbad Plaza", type: "toll", route: "kolkata_patna" },
+    { lat: 24.79, lng: 85.00, label: "Rest — Gaya Stop", type: "rest", route: "kolkata_patna" },
+];
 
-const ROUTE_LABELS: Record<string, string> = {
-    delhi_mumbai: "Delhi – Mumbai (NH48)",
-    chennai_bangalore: "Chennai – Bangalore (NH48)",
-    kolkata_patna: "Kolkata – Patna (NH19)",
-};
+function statusColor(status: string): string {
+    if (status === "HIGH_EMISSION_ALERT") return "#ef4444";
+    if (status === "WARNING") return "#f59e0b";
+    return "#00ff87";
+}
 
-/* ── Ghost path: remaining waypoints from current position ── */
-function getRemainingWaypoints(
-    lat: number, lon: number, corridor: [number, number][]
-): [number, number][] {
-    let nearestIdx = 0;
-    let minDist = Infinity;
-    corridor.forEach(([wlat, wlon], i) => {
-        const d = Math.sqrt((lat - wlat) ** 2 + (lon - wlon) ** 2);
-        if (d < minDist) { minDist = d; nearestIdx = i; }
-    });
-    return [[lat, lon], ...corridor.slice(nearestIdx + 1)];
+function checkpointColor(type: string): string {
+    if (type === "toll") return "#fbbf24";
+    if (type === "rest") return "#3b82f6";
+    return "#f97316";
 }
 
 interface Props {
@@ -61,240 +83,224 @@ interface Props {
     height?: string;
 }
 
-function getMarkerState(v: VehicleEvent, anomalies: any[]) {
-    // Check if this vehicle has any active anomalies
-    const vehicleAnomalies = anomalies.filter(a => a.vehicle_id === v.vehicle_id);
-
-    let color = "#00ff87"; // Default Normal
-    let isAlert = false;
-    let pulseType = "";
-
-    if (vehicleAnomalies.length > 0) {
-        // Prioritize critical over warning
-        const criticals = vehicleAnomalies.filter(a => a.severity === "CRITICAL");
-        const warnings = vehicleAnomalies.filter(a => a.severity === "WARNING");
-
-        isAlert = true;
-
-        if (criticals.some(a => a.type === "TEMPERATURE_BREACH")) {
-            color = "#00d4ff"; // Blue for cold chain
-            pulseType = "pulse-blue";
-        } else if (criticals.length > 0) {
-            color = "#ef4444"; // Red for other criticals
-            pulseType = "pulse-red";
-        } else if (warnings.length > 0) {
-            color = "#f59e0b"; // Orange for warnings
-            pulseType = "pulse-orange";
-        }
-    }
-
-    return { color, isAlert, pulseType };
-}
-
-function etaStatusColor(eta?: string) {
-    if (eta === "DELAYED") return "#ef4444";
-    if (eta === "AT_RISK") return "#f59e0b";
-    return "#00ff87";
-}
-
-function makeIcon(color: string, isAlert: boolean, pulseType: string, etaStatus?: string) {
-    if (typeof window === "undefined") return undefined;
-    const L = require("leaflet");
-    const bg = isAlert ? color : "#fff";
-
-    const delayBadge = etaStatus === "DELAYED"
-        ? `<div style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);
-            background:#ef4444;color:white;font-size:8px;font-weight:700;
-            padding:1px 5px;border-radius:4px;white-space:nowrap;">DELAYED</div>`
-        : "";
-
-    return L.divIcon({
-        className: "",
-        html: `<div style="position:relative;">
-            ${delayBadge}
-            <div style="width:14px;height:14px;border-radius:50%;background:${bg};
-                box-shadow:0 0 12px ${color};border:2px solid #0F172A"></div>
-        </div>`,
-        iconSize: [14, 14],
-        iconAnchor: [7, 7],
-    });
-}
-
-import { useFleet } from "@/lib/FleetContext";
-
 export default function IndiaMap({
-    vehicles, onVehicleClick, selectedVehicleId,
-    singleRoute, singleVehicle, height = "100%",
+    vehicles,
+    onVehicleClick,
+    selectedVehicleId,
+    singleRoute,
+    singleVehicle = false,
+    height = "100%",
 }: Props) {
-    const mapRef = useRef<any>(null);
-    const { anomalies } = useFleet();
+    const containerRef = useRef<HTMLDivElement>(null);
+    const mapRef = useRef<L.Map | null>(null);
+    const layerGroupRef = useRef<L.LayerGroup | null>(null);
+    const [activeRoute, setActiveRoute] = useState(singleRoute || "all");
 
+    const visibleRoutes = useMemo(() => {
+        if (activeRoute === "all") return Object.keys(ROUTE_DATA);
+        return [activeRoute].filter(r => r in ROUTE_DATA);
+    }, [activeRoute]);
+
+    const visibleVehicles = useMemo(() => {
+        if (activeRoute === "all") return vehicles;
+        return vehicles.filter(v => v.route_id === activeRoute);
+    }, [vehicles, activeRoute]);
+
+    const visibleCheckpoints = useMemo(() => {
+        if (activeRoute === "all") return CHECKPOINTS;
+        return CHECKPOINTS.filter(c => c.route === activeRoute);
+    }, [activeRoute]);
+
+    // Initialize map
     useEffect(() => {
-        if (mapRef.current) setTimeout(() => mapRef.current?.invalidateSize(), 150);
-    }, []);
+        if (!containerRef.current || mapRef.current) return;
 
-    const routes = singleRoute
-        ? { [singleRoute]: ROUTE_CORRIDORS[singleRoute] || [] }
-        : ROUTE_CORRIDORS;
+        const map = L.map(containerRef.current, {
+            center: [22.0, 80.0],
+            zoom: singleVehicle ? 7 : 5,
+            zoomControl: false,
+            attributionControl: false,
+        });
 
-    const center: [number, number] = singleVehicle && vehicles.length === 1
-        ? [vehicles[0].latitude, vehicles[0].longitude]
-        : [22.0, 82.0];
-    const zoom = singleVehicle ? 7 : 5;
+        L.tileLayer(TILE_URL).addTo(map);
+        L.control.zoom({ position: "bottomright" }).addTo(map);
 
-    /* ── Ghost paths: dashed lines from each vehicle to destination ── */
-    const ghostPaths = useMemo(() => {
-        if (singleVehicle) return [];
-        return vehicles
-            .map(v => {
-                const corridor = ROUTE_CORRIDORS[v.route_id];
-                if (!corridor) return null;
-                const remaining = getRemainingWaypoints(v.latitude, v.longitude, corridor);
-                if (remaining.length < 2) return null;
-                const ghostColor = v.eta_status === "DELAYED"
-                    ? "#ef4444"
-                    : (ROUTE_COLORS[v.route_id] ?? "#00ff87");
-                return { id: v.vehicle_id, positions: remaining, color: ghostColor };
+        mapRef.current = map;
+        layerGroupRef.current = L.layerGroup().addTo(map);
+
+        return () => {
+            map.remove();
+            mapRef.current = null;
+            layerGroupRef.current = null;
+        };
+    }, [singleVehicle]);
+
+    // Update markers & routes when data changes
+    useEffect(() => {
+        const map = mapRef.current;
+        const lg = layerGroupRef.current;
+        if (!map || !lg) return;
+
+        lg.clearLayers();
+        const allBounds: L.LatLng[] = [];
+
+        // Draw route polylines
+        for (const routeId of visibleRoutes) {
+            const route = ROUTE_DATA[routeId];
+            if (!route) continue;
+
+            const latlngs: L.LatLngExpression[] = route.waypoints;
+            L.polyline(latlngs, {
+                color: route.color,
+                weight: 4,
+                opacity: 0.7,
+            }).addTo(lg);
+
+            // Origin pin
+            L.marker([route.origin.lat, route.origin.lng], {
+                icon: L.divIcon({
+                    className: "",
+                    html: `<div style="display:flex;flex-direction:column;align-items:center;">
+                        <div style="background:#10B981;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 8px #10B98155;">${route.origin.name}</div>
+                        <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #10B981;margin-top:-1px;"></div>
+                    </div>`,
+                    iconSize: [60, 30],
+                    iconAnchor: [30, 30],
+                }),
+            }).addTo(lg);
+
+            // Destination pin
+            L.marker([route.destination.lat, route.destination.lng], {
+                icon: L.divIcon({
+                    className: "",
+                    html: `<div style="display:flex;flex-direction:column;align-items:center;">
+                        <div style="background:#ef4444;color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;white-space:nowrap;box-shadow:0 2px 8px #ef444455;">${route.destination.name}</div>
+                        <div style="width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid #ef4444;margin-top:-1px;"></div>
+                    </div>`,
+                    iconSize: [60, 30],
+                    iconAnchor: [30, 30],
+                }),
+            }).addTo(lg);
+
+            allBounds.push(L.latLng(route.origin.lat, route.origin.lng));
+            allBounds.push(L.latLng(route.destination.lat, route.destination.lng));
+        }
+
+        // Ghost paths for delayed vehicles
+        for (const v of visibleVehicles.filter(v => v.eta_status === "DELAYED")) {
+            const route = ROUTE_DATA[v.route_id];
+            if (!route) continue;
+            L.polyline(route.waypoints, {
+                color: "#ef4444",
+                weight: 2,
+                opacity: 0.3,
+                dashArray: "8 6",
+            }).addTo(lg);
+        }
+
+        // Checkpoint markers
+        for (const cp of visibleCheckpoints) {
+            const color = checkpointColor(cp.type);
+            const radius = cp.type === "toll" ? "4px" : "50%";
+            const icons: Record<string, string> = { toll: "⬡", weigh: "▲", rest: "🛏" };
+            const icon = icons[cp.type] || "▲";
+
+            L.marker([cp.lat, cp.lng], {
+                icon: L.divIcon({
+                    className: "",
+                    html: `<div style="width:20px;height:20px;border-radius:${radius};background:${color};display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;border:2px solid rgba(0,0,0,0.3);box-shadow:0 0 6px ${color}66;">${icon}</div>`,
+                    iconSize: [20, 20],
+                    iconAnchor: [10, 10],
+                }),
             })
-            .filter(Boolean) as { id: string; positions: [number, number][]; color: string }[];
-    }, [vehicles, singleVehicle]);
+                .bindPopup(`<div style="font-size:0.82rem;"><strong>${cp.label}</strong><br/>Type: ${cp.type}</div>`)
+                .addTo(lg);
+        }
+
+        // Truck markers
+        for (const v of visibleVehicles) {
+            const color = statusColor(v.status);
+            const isSelected = v.vehicle_id === selectedVehicleId;
+            const size = isSelected ? 18 : 14;
+            const isAlert = v.status === "HIGH_EMISSION_ALERT";
+
+            const marker = L.marker([v.latitude, v.longitude], {
+                icon: L.divIcon({
+                    className: "",
+                    html: `<div style="width:${size}px;height:${size}px;border-radius:50%;background:${color};border:2px solid rgba(255,255,255,0.6);box-shadow:0 0 ${isSelected ? 12 : 8}px ${color}${isSelected ? "aa" : "66"};cursor:pointer;"></div>`,
+                    iconSize: [size, size],
+                    iconAnchor: [size / 2, size / 2],
+                }),
+            }).addTo(lg);
+
+            marker.bindPopup(`
+                <div style="font-size:0.82rem;min-width:160px;">
+                    <strong style="font-size:0.9rem;">${v.vehicle_id}</strong>
+                    <div style="margin-top:4px;line-height:1.6;">
+                        Route: ${v.route_id?.replace(/_/g, " → ") || "N/A"}<br/>
+                        Speed: ${v.speed_kmph?.toFixed(1)} km/h<br/>
+                        CO₂: ${v.co2_kg?.toFixed(2)} kg<br/>
+                        ${v.cargo_type ? `Cargo: ${v.cargo_type}<br/>` : ""}
+                        ETA: ${v.eta_hours?.toFixed(1)}h (${v.eta_status})
+                        ${isAlert ? `<div style="color:#ef4444;font-weight:700;margin-top:4px;">⚠ HIGH EMISSION ALERT</div>` : ""}
+                    </div>
+                </div>
+            `);
+
+            if (onVehicleClick) {
+                marker.on("click", () => onVehicleClick(v.vehicle_id));
+            }
+
+            allBounds.push(L.latLng(v.latitude, v.longitude));
+        }
+
+        // Fit bounds
+        if (allBounds.length > 1) {
+            map.fitBounds(L.latLngBounds(allBounds), { padding: [40, 40] });
+        }
+    }, [visibleRoutes, visibleVehicles, visibleCheckpoints, selectedVehicleId, onVehicleClick]);
 
     return (
         <div style={{ height, width: "100%", borderRadius: 14, overflow: "hidden", position: "relative", background: "#0a0f1a" }}>
-            <MapContainer
-                ref={mapRef}
-                center={center}
-                zoom={zoom}
-                style={{ height: "100%", width: "100%", background: "#0a0f1a" }}
-                attributionControl={false}
-            >
-                {/* FIXED: correct dark_matter tile URL (no _nolabels suffix) */}
-                <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/dark_matter/{z}/{x}/{y}{r}.png"
-                    attribution="&copy; CartoDB"
-                />
-
-                {/* Animated Dashed Route Line */}
-                {Object.entries(routes).filter(([, pts]) => pts?.length).map(([routeId, pts]) => (
-                    <Polyline key={`dash-${routeId}`} positions={pts}
-                        pathOptions={{ color: ROUTE_COLORS[routeId], weight: 3, opacity: 0.8, dashArray: "10, 10", className: "animated-route" }} />
-                ))}
-
-                {/* Truck markers */}
-                {vehicles.map(v => {
-                    const { color, isAlert, pulseType } = getMarkerState(v, anomalies);
-                    const icon = makeIcon(color, isAlert, pulseType, v.eta_status);
-                    const etaLine = v.eta_hours != null && v.eta_hours < 99
-                        ? `<div>ETA: <strong>${v.eta_hours.toFixed?.(1) ?? v.eta_hours}h</strong>
-                           <span style="color:${etaStatusColor(v.eta_status)}">${v.eta_status ?? ""}</span></div>`
-                        : "";
-                    const customerLine = v.customer ? `<div style="color:#8b949e;font-size:11px;">→ ${v.customer}</div>` : "";
-
-                    // Anomalies for tooltip
-                    const vAnomalies = anomalies.filter(a => a.vehicle_id === v.vehicle_id);
-
-                    return (
-                        <Marker
-                            key={v.vehicle_id}
-                            position={[v.latitude, v.longitude]}
-                            icon={icon}
-                            eventHandlers={{ click: () => onVehicleClick?.(v.vehicle_id) }}
-                        >
-                            <Popup>
-                                <div style={{
-                                    color: "#f0f6fc", background: "#0d1421",
-                                    padding: "10px 14px", borderRadius: 8,
-                                    minWidth: 200, fontSize: "0.8rem",
-                                    border: "1px solid #1e293b",
-                                }}>
-                                    <strong style={{ color, fontSize: "0.85rem" }}>{v.vehicle_id}</strong>
-                                    <div style={{ color: "#8b949e", fontSize: "0.72rem", marginBottom: 6 }}>
-                                        {v.route_id.replace(/_/g, " → ")}
-                                    </div>
-                                    <div style={{ paddingBottom: 6, borderBottom: "1px solid #1e293b", marginBottom: 6 }}>
-                                        <div>Cargo: <strong>{v.cargo_type}</strong></div>
-                                        {v.temperature_c !== undefined && (
-                                            <div>Temp: <strong style={{ color: v.temperature_breach ? "#00d4ff" : "inherit" }}>{v.temperature_c}°C</strong></div>
-                                        )}
-                                        {v.overload_pct !== undefined && v.overload_pct > 0 && (
-                                            <div>Load: <strong style={{ color: "#ef4444" }}>OVERLOADED (+{v.overload_pct}%)</strong></div>
-                                        )}
-                                        {v.overload_pct !== undefined && v.overload_pct <= 0 && (
-                                            <div>Load: <strong>OK</strong></div>
-                                        )}
-                                    </div>
-                                    <div dangerouslySetInnerHTML={{ __html: etaLine }} />
-                                    <div dangerouslySetInnerHTML={{ __html: customerLine }} />
-
-                                    {vAnomalies.length > 0 ? (
-                                        <div style={{ marginTop: 6, color, fontWeight: 600, fontSize: "0.72rem", display: "flex", flexDirection: "column", gap: 2 }}>
-                                            {vAnomalies.slice(0, 2).map(a => (
-                                                <span key={a.id}>⚠ {a.type.replace(/_/g, " ")}</span>
-                                            ))}
-                                            {vAnomalies.length > 2 && <span style={{ color: "#8b949e", fontSize: "0.6rem" }}>+{vAnomalies.length - 2} more issues</span>}
-                                        </div>
-                                    ) : (
-                                        <div style={{ marginTop: 6, color: "#00ff87", fontWeight: 600, fontSize: "0.72rem" }}>
-                                            ALL CLEAR
-                                        </div>
-                                    )}
-                                </div>
-                            </Popup>
-                        </Marker>
-                    );
-                })}
-            </MapContainer>
-
-            {/* Empty state overlay */}
-            {vehicles.length === 0 && (
-                <div style={{
-                    position: "absolute", inset: 0,
-                    display: "flex", flexDirection: "column",
-                    alignItems: "center", justifyContent: "center",
-                    background: "rgba(10,15,26,0.8)",
-                    zIndex: 1000, gap: 10, pointerEvents: "none",
-                }}>
-                    <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#00ff87", animation: "pulse-ring 1.5s ease-out infinite" }} />
-                    <span style={{ color: "#8b949e", fontSize: "0.8rem" }}>Waiting for telemetry…</span>
+            {/* Route Selector */}
+            {!singleVehicle && (
+                <div style={{ position: "absolute", top: 12, right: 12, zIndex: 1000 }}>
+                    <select
+                        value={activeRoute}
+                        onChange={e => setActiveRoute(e.target.value)}
+                        style={{
+                            background: "rgba(13,20,33,0.9)", border: "1px solid #1e293b",
+                            borderRadius: 8, padding: "6px 12px", color: "#f0f6fc",
+                            fontSize: "0.78rem", outline: "none", cursor: "pointer",
+                            backdropFilter: "blur(8px)",
+                        }}
+                    >
+                        {ROUTES.map(r => <option key={r.id} value={r.id}>{r.label}</option>)}
+                    </select>
                 </div>
             )}
 
-            {/* Bottom-left: Condition Legend */}
+            {/* Leaflet Map Container */}
+            <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
+
+            {/* Legend */}
             {!singleVehicle && (
                 <div style={{
                     position: "absolute", bottom: 12, left: 12, zIndex: 1000,
-                    background: "rgba(13,20,33,0.9)", border: "1px solid #1e293b",
-                    borderRadius: 8, padding: "8px 12px", pointerEvents: "none",
+                    background: "rgba(13,20,33,0.85)", backdropFilter: "blur(8px)",
+                    border: "1px solid #1e293b", borderRadius: 10, padding: "10px 14px",
+                    display: "flex", gap: 14, fontSize: "0.68rem",
                 }}>
-                    <div style={{ color: "#8b949e", fontSize: "0.6rem", textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 6 }}>
-                        Condition Legend
-                    </div>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: "0.65rem", color: "#f0f6fc" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 10, height: 10, borderRadius: "50%", background: "#00ff87" }} /> Normal</div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 10, height: 10, borderRadius: "50%", background: "#f59e0b" }} /> Warning</div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 10, height: 10, borderRadius: "50%", background: "#ef4444" }} /> Critical</div>
-                        <div style={{ display: "flex", alignItems: "center", gap: 6 }}><div style={{ width: 10, height: 10, borderRadius: "50%", background: "#00d4ff" }} /> SLA Breach (Colchain)</div>
-                    </div>
-                </div>
-            )}
-
-            {/* Top-right: Route legend */}
-            {!singleVehicle && (
-                <div style={{
-                    position: "absolute", top: 12, right: 12, zIndex: 1000,
-                    background: "rgba(13,20,33,0.9)", border: "1px solid #1e293b",
-                    borderRadius: 8, padding: "8px 12px", pointerEvents: "none",
-                }}>
-                    {Object.entries(ROUTE_COLORS).map(([route, color]) => (
-                        <div key={route} style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 3, fontSize: "0.62rem" }}>
-                            <div style={{ width: 16, height: 2, background: color, borderRadius: 1 }} />
-                            <span style={{ color: "#8b949e" }}>{ROUTE_LABELS[route] ?? route}</span>
+                    {[
+                        { color: "#00ff87", label: "Normal" },
+                        { color: "#f59e0b", label: "Warning" },
+                        { color: "#ef4444", label: "Alert" },
+                    ].map(item => (
+                        <div key={item.label} style={{ display: "flex", alignItems: "center", gap: 5 }}>
+                            <div style={{ width: 8, height: 8, borderRadius: "50%", background: item.color }} />
+                            <span style={{ color: "#8b949e" }}>{item.label}</span>
                         </div>
                     ))}
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 5, paddingTop: 5, borderTop: "1px solid #1e293b", fontSize: "0.6rem" }}>
-                        <div style={{ width: 16, borderTop: "2px dashed #8b949e" }} />
-                        <span style={{ color: "#4b5563" }}>Predicted path</span>
-                    </div>
                 </div>
             )}
         </div>
