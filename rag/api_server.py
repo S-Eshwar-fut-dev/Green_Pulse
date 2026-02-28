@@ -5,19 +5,18 @@ Handles fleet data, booking management, AI chat, SSE streaming,
 pathway health monitoring, carbon reports, and fleet rankings.
 """
 
-import json
-import time
 import asyncio
-import re
-import os
+import json
 import logging
+import os
+import re
+import time
+from datetime import datetime
 from pathlib import Path
-from datetime import datetime, timedelta
-from typing import Optional
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.responses import JSONResponse, StreamingResponse
 
 logger = logging.getLogger(__name__)
 
@@ -182,7 +181,7 @@ async def stream_fleet_data():
         while True:
             if FLEET_FILE.exists():
                 try:
-                    with open(FLEET_FILE, "r", encoding="utf-8") as f:
+                    with open(FLEET_FILE, encoding="utf-8") as f:
                         f.seek(last_position)
                         new_lines = f.readlines()
                         last_position = f.tell()
@@ -448,31 +447,31 @@ def eta_breakdown():
 # AI CHAT (Task 7)
 # ────────────────────────────────────────────────────────────────────
 
-def _extract_vehicle_id(query: str) -> Optional[str]:
+def _extract_vehicle_id(query: str) -> str | None:
     """Extract vehicle ID from query using regex."""
     match = re.search(r"TRK-[A-Z]+-\d+", query, re.IGNORECASE)
     return match.group(0).upper() if match else None
 
 
-def _extract_booking_id(query: str) -> Optional[str]:
+def _extract_booking_id(query: str) -> str | None:
     """Extract booking ID from query."""
     match = re.search(r"BK-\d+", query, re.IGNORECASE)
     return match.group(0).upper() if match else None
 
 
-def _find_booking_by_vehicle(vehicle_id: str) -> Optional[dict]:
+def _find_booking_by_vehicle(vehicle_id: str) -> dict | None:
     """Find booking assigned to a vehicle."""
     bookings = _read_jsonl(BOOKINGS_FILE, last_n=100)
     return next((b for b in bookings if b.get("vehicle_id") == vehicle_id), None)
 
 
-def _find_booking(booking_id: str) -> Optional[dict]:
+def _find_booking(booking_id: str) -> dict | None:
     """Find booking by ID."""
     bookings = _read_jsonl(BOOKINGS_FILE, last_n=100)
     return next((b for b in bookings if b.get("booking_id") == booking_id), None)
 
 
-def _handle_structured_query(query: str) -> Optional[str]:
+def _handle_structured_query(query: str) -> str | None:
     """Route structured queries before hitting Gemini."""
     q = query.lower()
     ts = datetime.now().strftime("%Y-%m-%d %H:%M")
@@ -500,7 +499,7 @@ def _handle_structured_query(query: str) -> Optional[str]:
         fleet = get_fleet()
         cold_chain = [v for v in fleet if v.get("temperature_c") is not None]
         breaches = [v for v in cold_chain if v.get("temperature_breach")]
-        report = f"**Temperature Compliance Report**\n\n"
+        report = "**Temperature Compliance Report**\n\n"
         report += f"- Cold chain vehicles: **{len(cold_chain)}**\n"
         report += f"- Active breaches: **{len(breaches)}**\n\n"
         for v in cold_chain:
